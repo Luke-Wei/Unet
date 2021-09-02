@@ -1,6 +1,7 @@
 ### Unet
 
 ##Unet_preprocess
+
 这个文件夹下存放的是预处理程序
 （1）执行labelme_json_to_png.py 将json转为png mask
 （2）执行spilit_labelme_dataset.py 从文件夹提取 png 图片
@@ -9,12 +10,15 @@
 
 
 ##unet-nested-multiple-classification-master
+
 这个文件夹下存放的是Unet模型
 
 #train
+
 python train.py
 
 #inference
+
 python inference.py -m ./data/checkpoints/epoch_80.pth -i ./data/test/input -o ./data/test/output
 
 

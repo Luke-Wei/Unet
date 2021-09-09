@@ -8,17 +8,16 @@
 """
 import os
 
-
 class UNetConfig:
 
     def __init__(self,
-                 epochs = 100,  # Number of epochs
-                 batch_size = 3,    # Batch size
+                 epochs = 80,  # Number of epochs
+                 batch_size = 8,    # Batch size
                  validation = 10.0,   # Percent of the data that is used as validation (0-100)
                  out_threshold = 0.5,
 
-                 optimizer='SGD',
-                 lr = 0.0001,     # learning rate
+                 optimizer='Adam',
+                 lr = 0.001,     # learning rate
                  lr_decay_milestones = [20, 50],
                  lr_decay_gamma = 0.9,
                  weight_decay=1e-8,
@@ -26,7 +25,7 @@ class UNetConfig:
                  nesterov=True,
 
                  n_channels = 1, # Number of channels in input images
-                 n_classes = 2,  # Number of classes in the segmentation
+                 n_classes = 3,  # Number of classes in the segmentation
                  scale = 1,    # Downscaling factor of the images
 
                  load = False,   # Load model from a .pth file

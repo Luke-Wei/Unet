@@ -23,14 +23,14 @@ from unet import NestedUNet
 from unet import UNet
 from utils.dataset import BasicDataset
 from config import UNetConfig
-
+from LovaszSoftmax.pytorch.lovasz_losses import binary_xloss
 cfg = UNetConfig()
 
 def inference_one(net, image, device):
     net.eval()
 
     img = torch.from_numpy(BasicDataset.preprocess(image, cfg.scale))
-
+    img = img/255
     img = img.unsqueeze(0)
     img = img.to(device=device, dtype=torch.float32)
 
@@ -40,7 +40,9 @@ def inference_one(net, image, device):
             output = output[-1]
 
         if cfg.n_classes > 1:
-            probs = F.softmax(output, dim=1)
+            probs = torch.sigmoid(output)
+
+            # probs = F.softmax(output, dim=1)
         else:
             probs = torch.sigmoid(output)
 
@@ -65,6 +67,7 @@ def inference_one(net, image, device):
                 mask = prob.squeeze().cpu().numpy()
                 mask = mask > cfg.out_threshold
                 masks.append(mask)
+
             return masks
   
   
@@ -116,4 +119,5 @@ if __name__ == "__main__":
             for idx in range(0, len(mask)):
                 img_name_idx = img_name_no_ext + "_" + str(idx) + ".png"
                 image_idx = Image.fromarray((mask[idx] * 255).astype(np.uint8))
+
                 image_idx.save(osp.join(output_img_dir, img_name_idx))

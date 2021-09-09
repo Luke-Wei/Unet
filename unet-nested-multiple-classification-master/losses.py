@@ -32,10 +32,29 @@ class LovaszLossHinge(nn.Module):
         loss = L.lovasz_hinge(input, target)
         return loss
 
+# https://www.kaggle.com/bigironsphere/loss-function-library-keras-pytorch?scriptVersionId=68471013&cellId=4
+# the next 2 dice loss have problems
+class DiceLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(DiceLoss, self).__init__()
+
+    def forward(self, inputs, targets, smooth=1):
+        
+        #comment out if your model contains a sigmoid or equivalent activation layer
+        inputs = F.sigmoid(inputs)       
+        
+        #flatten label and prediction tensors
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+        
+        intersection = (inputs * targets).sum()                            
+        dice = (2.*intersection + smooth)/(inputs.sum() + targets.sum() + smooth)  
+        
+        return 1 - dice
 
 class DiceCoeff(Function):
     """Dice coeff for individual examples"""
-
+    @staticmethod
     def forward(self, input, target):
         self.save_for_backward(input, target)
         eps = 0.0001
@@ -46,6 +65,7 @@ class DiceCoeff(Function):
         return t
 
     # This function has only a single output, so it gets only one gradient
+    @staticmethod
     def backward(self, grad_output):
 
         input, target = self.saved_variables
